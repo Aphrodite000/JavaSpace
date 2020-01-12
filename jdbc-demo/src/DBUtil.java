@@ -1,3 +1,6 @@
+//两个封装
+//getConnection的封装
+//close的封装
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 
 import javax.sql.DataSource;
@@ -21,10 +24,12 @@ public class DBUtil {
     private  static final String PASSWORD="root";
 
     //一个数据源多个链接，不用关闭，实际上只是再次初始化
-    //创建mysql的数据源
+    //创建mysql的数据源    单例获取数据源
     private static DataSource DATASOURCE=new MysqlDataSource();
     //数据源初始化
     static {
+        //要用静态代码块的原因是，这个是首先要做的，不管外部如何，总是要先
+        //new一个数据源，并且初始化它
         //强制转化
         ((MysqlDataSource) DATASOURCE).setUrl(URL);
         ((MysqlDataSource) DATASOURCE).setUser(USER_NAME);
@@ -34,11 +39,15 @@ public class DBUtil {
     //封装起来，提供给别人使用，不用每次都用手写main来测试它是否正常，借助第三方框架来测试
     // 封装 其他程序要用的直接用connection对象，不用直接用数据源
     public static Connection getConnection(){
+        //定义和初始化也可以写在方法内部，但是性能不会提升
+        //因为每次调用都会新new一个数据源
+
         try {
             return DATASOURCE.getConnection();
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("数据库连接获取失败");
+            //捕获到受查异常，然后抛出一个运行时异常
         }
     }
 
@@ -105,4 +114,25 @@ public class DBUtil {
             }
         }
     }    */
+
+    //把关闭连接封装起来
+    public static void close(Connection connection,PreparedStatement ps,ResultSet rs){
+        //关闭
+        try {
+            if(rs!=null){
+                rs.close();
+            }
+            if(ps!=null){
+                ps.close();
+            }
+            if(connection!=null){
+                connection.close();
+                //通过数据源获取的连接，关闭的时候，不是真实的物理上的关闭，而是把连接放到连接池
+                //连接池会把连接再次初始化重置操作，物理上是没有关闭的
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("释放资源失败");
+        }
+    }
 }
