@@ -8,10 +8,10 @@ import java.util.List;
 public class Select {
 
     public static void main(String[] args) {
-        Connection connection=DBUtil.getConnection();
-        String sql="select * from student where id=?";
-        PreparedStatement ps=null;
-        ResultSet rs=null;
+        Connection connection=DBUtil.getConnection();//获取连接
+        String sql="select * from student where id=?";//sql语句
+        PreparedStatement ps=null;//获取操作对象
+        ResultSet rs=null;//结果集
         //？是占位符，这是要用preparedStatement,之后要替换掉
         try {
             ps=connection.prepareStatement(sql);
@@ -118,7 +118,7 @@ public class Select {
     //抽取占位符，作为传入参数，
     // 思考返回值，抽出来一个类
     //处理值的时候，建一个Student对象，数据库表到Student方法的转换,在把每一个实体对象加入List中
-    //最后返回list
+    //最后返回list          传入学生的邮箱和学生的班级
     public List <Student> selectStudent(String mail,Integer classesId){
         //mail就是以什么结尾的
         Connection connection=null;
@@ -148,6 +148,8 @@ public class Select {
                 students.add(student);
                // System.out.println(student); //绿色的列名随便写，这是字符串打印
             }
+            //上面是处理结果集，处理结果集的每一行之后就直接打印了，而这个是要返回一个列表，
+            //把每一行元素都组成一个类的对象，返回结果集，就是对象集，就是List
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {

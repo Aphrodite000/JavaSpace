@@ -50,7 +50,7 @@ public class DBUtil {
             //捕获到受查异常，然后抛出一个运行时异常
         }
     }
-
+    //简写  增删查改都在这里进行
     public static void main(String[] args) {
         try {
             //获取连接
@@ -60,7 +60,7 @@ public class DBUtil {
             e.printStackTrace();
         }
     }
-    /*
+    /*用DriverManager类来获取
     public static void main(String[] args){
         Connection connection=null;
         Statement statement=null;
@@ -113,8 +113,9 @@ public class DBUtil {
                 e.printStackTrace();
             }
         }
-    }    */
+    }
 
+     */
     //把关闭连接封装起来
     public static void close(Connection connection,PreparedStatement ps,ResultSet rs){
         //关闭
